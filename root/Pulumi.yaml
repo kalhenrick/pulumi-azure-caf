@@ -1,0 +1,3 @@
+name: azure-root
+runtime: nodejs
+description: Azure Core Resources
