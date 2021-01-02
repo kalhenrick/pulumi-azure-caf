@@ -10,6 +10,7 @@ const subscription = config.require('subscription');
 const location = config.get('location');
 const budget = config.getNumber('budget');
 const retention = config.getNumber('retention');
+const securityResource = config.getObject('securityResource');
 
 const logsDefintionActivyLog = [{
     category: 'Security',
@@ -62,4 +63,4 @@ const logsDefintionActivyLog = [{
     },
 }]
 
-module.exports = {roleContributorId, orgname, domain, seed, subscription, location, budget, retention, logsDefintionActivyLog, roleNetContributorId}   
+module.exports = {roleContributorId, orgname, domain, seed, subscription, location, budget, retention, logsDefintionActivyLog, roleNetContributorId, securityResource}   

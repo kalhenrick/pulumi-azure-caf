@@ -1,3 +1,4 @@
+const pulumi = require("@pulumi/pulumi");
 const environment = ['nonprod','prod','mgmt','billing'];
 const {UsersAD} = require('./modules/aad/user');
 const {createGroups} = require('./modules/aad/group');
@@ -9,8 +10,12 @@ const {createBudget} = require('./modules/billing/budget')
 const {createDefaultPolicies} = require('./modules/policies/main');
 const {createWorkspace} = require('./modules/operationalinsights/workspace');
 const {createDiagSetting} = require('./modules/insights/diagnostic');
+const {EnableSecurityCenter}  = require('./modules/security/securityCenter');
 
 const config = require('./config/main');
+
+/*Enable Security Center*/
+EnableSecurityCenter(config.securityResource);
 
 /*Create Budget*/
 createBudget(config.subscription,config.budget);
@@ -87,6 +92,23 @@ createDiagSetting(`/subscriptions/${config.subscription}`, workspaces[2].id, 'di
 /*Set Basic Policies*/
 createDefaultPolicies(config.subscription);
 
+let outServicesPrincipals = [];
+ servicesPrincipals.forEach(function(s){
+    outServicesPrincipals.push(
+        pulumi.all([s.passInfo.description,s.spInfo.applicationId,s.passInfo.value]).
+            apply(([envr,spr,pass]) => `Environment: ${envr}, Service Principal: ${spr}, Password: ${pass}`)
+    );
+});
+
+let outUsers = [];
+ users.forEach(function(u){
+    outUsers.push(
+        pulumi.all([u.userPrincipalName,u.password]).
+            apply(([us,pasw]) => `User: ${us}, Password: ${pasw}`)
+    );
+});
+
+
  module.exports = {
-     servicesPrincipals, users
+    outServicesPrincipals, outUsers
  }

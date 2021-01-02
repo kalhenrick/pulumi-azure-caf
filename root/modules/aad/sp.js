@@ -13,7 +13,7 @@ const config = new pulumi.Config();
 
             const srvicePrincipalPassword = new azuread.ServicePrincipalPassword(`sppw-${orgname}-${env}`, {
              servicePrincipalId: servicePrincipal.id,
-                description: "My managed password",
+                description: `My managed password ${env}`,
                 value: rand.string(24),
                 endDate: "2099-01-01T01:02:03Z",
             });
