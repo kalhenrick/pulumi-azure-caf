@@ -1,7 +1,7 @@
 const azure_nextgen = require("@pulumi/azure-nextgen");
 
 function createWorkspace(localization,resourceGroup,retention,env) {
-    return new azure_nextgen.operationalinsights.latest.Workspace(`logw-${env}-default-001`, {
+    return new azure_nextgen.operationalinsights.v20200301preview.Workspace(`logw-${env}-default-001`, {
         location: localization,
         resourceGroupName: resourceGroup,
         retentionInDays: retention,

@@ -47,9 +47,9 @@ users.map(u => u.id).forEach(function(us,index) {+
 /*Role View Billing*/
 environment.forEach(function(env,index){
     if(env === 'billing') {
-        assingRole(groups[index].id,roleAllowViewBilling.id,`AllowBilling-${env}`,'');
+        assingRole(groups[index].id,roleAllowViewBilling.name,`AlwBill-${env}`,'');
     }else {
-        assingRole(groups[index].id,roleDenyViewBilling.id,`DennyBilling-${env}`,'');
+        assingRole(groups[index].id,roleDenyViewBilling.name,`DenBill-${env}`,'');
     }
 });;
 
@@ -63,19 +63,19 @@ environment.forEach(function(env){
 /*Create Role Assing Service Principal*/
 environment.forEach(function(env,index){
     if (env != 'billing' && env != 'mgmt'){
-        assingRole(servicesPrincipals[index].spInfo.id,config.roleContributorId,`rl-rg-${env}-contributor`,resourcegroups[index].id)
-        assingRole(servicesPrincipals[2].spInfo.id,config.roleNetContributorId,`rl-rg-${env}-mgmt-net-contributor`,resourcegroups[index].id)
+        assingRole(servicesPrincipals[index].spInfo.id,'Contributor',`rl-rg-${env}-contributor`,resourcegroups[index].id)
+        assingRole(servicesPrincipals[2].spInfo.id,'Network Contributor',`rl-rg-${env}-mgmt-net-contributor`,resourcegroups[index].id)
     } else if (env === 'mgmt') {
-        assingRole(servicesPrincipals[index].spInfo.id,config.roleContributorId,`rl-rg-${env}-contributor`,resourcegroups[index].id)
+        assingRole(servicesPrincipals[index].spInfo.id,'Contributor',`rl-rg-${env}-contributor`,resourcegroups[index].id)
     }
     
 });
 
 /*Create Role Assing Group*/
-environment.forEach(function(env,index){
-    if (env != 'billing')
-        assingRole(groups[index].id,config.roleContributorId,`rl-gp-${env}-contributor`,resourcegroups[index].id)
-});
+ environment.forEach(function(env,index){
+     if (env != 'billing')
+         assingRole(groups[index].id,'Contributor',`rl-gp-${env}-contributor`,resourcegroups[index].id)
+ });
 
 /*Create Log Workspace*/
 let workspaces = [];

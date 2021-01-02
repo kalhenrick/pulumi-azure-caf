@@ -1,4 +1,5 @@
 const azure_nextgen = require("@pulumi/azure-nextgen");
+const moment = require('moment');
 
 function createBudget(subscription,budget) {
     new  azure_nextgen.costmanagement.v20190401preview.Budget('BudgetDefault',{
@@ -8,7 +9,7 @@ function createBudget(subscription,budget) {
         scope: `/subscriptions/${subscription}`,
         timeGrain:  'Monthly',
         timePeriod: {
-            startDate: '2020-12-01',
+            startDate: `${moment().format('YYYY-MM')}-01`,
             endDate: '2099-01-01'
         }
         

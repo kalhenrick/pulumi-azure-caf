@@ -1,25 +1,24 @@
 const azure_nextgen = require("@pulumi/azure-nextgen");
-const azure = require("@pulumi/azure");
 const pulumi = require("@pulumi/pulumi");
+const azure = require("@pulumi/azure");
+
 let config = new pulumi.Config();
 
 
 
 function assingRole(pId,RlId,RlAsName,roleScope) {
-    if (roleScope != '') {
-        const subscription = config.require('subscription');;
-        const scopeId = `/subscriptions/${subscription}`;
+    const subscription = config.require('subscription');
+    let scopeId = '';
+    if (roleScope === '') {
+         scopeId = `/subscriptions/${subscription}`;
     } else {
-        scopeId = roleScope;
+         scopeId = roleScope;
     }
     
-    return new azure_nextgen.authorization.latest.RoleAssignment(`roleAssig${RlAsName}`, {
-        properties: {
-            principalId: pId,
-            roleDefinitionId: RlId,
-        },
-        roleAssignmentName: `roleAssig${RlAsName}`,
+       return  new azure.authorization.Assignment(`rl${RlAsName}`, {
         scope: scopeId,
+        principalId: pId,
+        roleDefinitionName: RlId
     });
 }
 

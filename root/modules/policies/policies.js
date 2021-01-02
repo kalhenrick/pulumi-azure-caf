@@ -22,15 +22,15 @@ const PoliciesDefs = [
             }
           }`
     },
-      {
-        name : 'InheritTagFromRG',
-        id: '/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54',
-        params: `{
-            "tagName": {
-              "value": "environment"
-            }
-          }`
-    },
+    //   {
+    //     name : 'InheritTagFromRG',
+    //     id: '/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54',
+    //     params: `{
+    //         "tagName": {
+    //           "value": "environment"
+    //         }
+    //       }`
+    // },
       {
         name : 'SecStgEnabled',
         id: '/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9',

@@ -1,10 +1,10 @@
-const azure_nextgen = require("@pulumi/azure-nextgen");
+const azure = require("@pulumi/azure");
 
  function allowViewBilling (subscription) 
    { 
-    return new azure_nextgen.authorization.latest.RoleDefinition("rl-allow-view-billing", {
-    roleDefinitionId: "allowViewBilling",
-    scope: "subscription",
+
+    return new azure.authorization.RoleDefinition("rl-allow-billing", {
+    scope: `/subscriptions/${subscription}`,
     assignableScopes: [`/subscriptions/${subscription}`],
     description: '',
     permissions : [            {
@@ -54,9 +54,8 @@ const azure_nextgen = require("@pulumi/azure-nextgen");
 }
 
  function denyViewBilling(subscription) {
-    return  new azure_nextgen.authorization.latest.RoleDefinition("rl-deny-view-billing", {
-    roleDefinitionId: "denyViewBilling",
-    scope: "subscription",
+    return  new azure.authorization.RoleDefinition("rl-deny-billing", {
+    scope: `/subscriptions/${subscription}`,
     assignableScopes: [`/subscriptions/${subscription}`],
     description: '',
     permissions : [            {

@@ -52,7 +52,7 @@ $ pulumi up
 |environment| Azure environment| string| public| yes|
 |domain| Azure Activy Directory domain| string| none| yes|
 |budget| Budget value for alert| number| none| yes|
-
+|securityResource| List of azure resources for enable security center|none|yes|
 
 ## Outputs
 
