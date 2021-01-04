@@ -1,0 +1,9 @@
+{
+    "name": "azure-network",
+    "main": "index.js",
+    "dependencies": {
+        "@pulumi/azure": "^3.41.0",
+        "@pulumi/azure-nextgen": "^0.3.1",
+        "@pulumi/pulumi": "^2.16.2"
+    }
+}
