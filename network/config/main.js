@@ -10,7 +10,8 @@ const location = config.require('location');
 const vnetAdressPrefix = config.require('vnetAdressPrefix');
 const retention = config.getNumber('retention');
 const environment = env;
-
+const orgpulumi = config.require('orgpulumi');
+const createGatewaySubnet = false;
 
 const rulesPublic = [
     {
@@ -51,6 +52,33 @@ const rulesPrivate = [
     },
 ];
 
+const rulesPrivateMgmt = [
+    {
+        name: 'BlockInternetIN',
+        priority: 1000,
+        direction: 'Inbound',
+        access: 'Deny',
+        protocol: 'TCP',
+        sourcePortRange: '*',
+        destinationPortRange: '*',
+        sourceAddressPrefix: 'Internet',
+        destinationAddressPrefix: '*'
+    },
+    {
+        name: 'OpenVpn1194',
+        priority: 3000,
+        direction: 'Inbound',
+        access: 'Allow',
+        protocol: 'UDP',
+        sourcePortRange: '*',
+        destinationPortRange: '1194',
+        sourceAddressPrefix: '*',
+        destinationAddressPrefix: '*'
+    }
+];
+
+
+
 const rulesSecure = [
     {
         name: 'BlockInternetIN',
@@ -76,18 +104,6 @@ const rulesSecure = [
     },
 ];
 
-
-const ruleOpenVPN  = {
-    name: 'OpenVpn1194',
-    priority: 3000,
-    direction: 'Inbound',
-    access: 'Allow',
-    protocol: 'UDP',
-    sourcePortRange: '*',
-    destinationPortRange: '*',
-    sourceAddressPrefix: '*',
-    destinationAddressPrefix: '*'
-}
 
 const rulesAppGateway = [
     {
@@ -187,13 +203,15 @@ module.exports = {applicationId,
     rulesPublic,
     rulesPrivate,
     rulesSecure,
-    ruleOpenVPN,
+    rulesPrivateMgmt,
     environment,
     vnetAdressPrefix,
     serviceEndpoints,
     rulesAppGateway,
     logDefinitionNSG,
     logDefinitionVnet,
-    metricDefinitionVnet
+    metricDefinitionVnet,
+    createGatewaySubnet,
+    orgpulumi
 
 }

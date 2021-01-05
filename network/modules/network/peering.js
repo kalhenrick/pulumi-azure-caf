@@ -1,16 +1,22 @@
 const azure_nextgen =  require("@pulumi/azure-nextgen");
 
-async function createPeeringVnet(vnetSource,vnetDest,rg,azureProvider) {
-    const virtualNetworkPeering = new azure_nextgen.network.latest.VirtualNetworkPeering("virtualNetworkPeering", {
+async function createPeeringVnet(namePeering,vnetSourceName,vnetDest,rg,azureProvider) {
+    const peering = await new azure_nextgen.network.latest.VirtualNetworkPeering(namePeering, {
         allowForwardedTraffic: true,
-        allowGatewayTransit: false,
+        allowGatewayTransit: true,
         allowVirtualNetworkAccess: true,
         remoteVirtualNetwork: {
-            id: "/subscriptions/subid/resourceGroups/peerTest/providers/Microsoft.Network/virtualNetworks/vnet2",
+            id: vnetDest.id,
         },
-        resourceGroupName: "peerTest",
+        resourceGroupName: rg,
         useRemoteGateways: false,
-        virtualNetworkName: "vnet1",
-        virtualNetworkPeeringName: "peer",
-    });
+        virtualNetworkName: vnetSourceName,
+        virtualNetworkPeeringName: namePeering,
+        name: namePeering,
+    },{provider: azureProvider});
+    return peering;
+}
+
+module.exports = {
+    createPeeringVnet
 }
