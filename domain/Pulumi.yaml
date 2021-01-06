@@ -1,0 +1,3 @@
+name: azure-domain
+runtime: nodejs
+description: Azure Domain Resources
