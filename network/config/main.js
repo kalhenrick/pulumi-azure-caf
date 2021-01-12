@@ -142,14 +142,13 @@ const rulesAppGateway = [
 ]
 
 serviceEndpoints = [
-    {
-        service: "Microsoft.Storage",
-        service: "Microsoft.ContainerRegistry",
-        service: "Microsoft.Web",
-        service: "Microsoft.Sql",
-        service: "Microsoft.KeyVault",
-        service: "Microsoft.AzureCosmosDB",
-    }
+    {      service: "Microsoft.Storage"},
+    {      service: "Microsoft.ContainerRegistry"},
+    {      service: "Microsoft.Web"},
+    {      service: "Microsoft.Sql"},
+    {      service: "Microsoft.KeyVault"},
+    {      service: "Microsoft.AzureCosmosDB"},
+    
 ]
 
 

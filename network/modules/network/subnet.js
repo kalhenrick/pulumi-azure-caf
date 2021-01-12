@@ -7,7 +7,7 @@ async function createSubsnet(subnetPrefixIp,rg,env,vnetName,name,securityGroup,e
         resourceGroupName: rg.name,
         subnetName: overrideNameconv ? name : `snet-${name}-${env}-${rg.location}-001`,
         virtualNetworkName: vnetName,
-        networkSecurityGroup: securityGroup.NetworkSecurityGroup,
+        networkSecurityGroup: {id:securityGroup.id},
         serviceEndpoints: endpoints
     },{provider: azureProvider});
     return subnet;
