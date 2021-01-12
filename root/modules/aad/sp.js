@@ -1,8 +1,6 @@
 const pulumi = require("@pulumi/pulumi");
 const azuread  = require("@pulumi/azuread");
 const gen = require('random-seed');
-const config = new pulumi.Config();
-
 
  function createServicePrincipal(env,domain,orgname,seed) {    
             let rand = gen.create(`${env}${domain}${seed}`);
@@ -13,8 +11,8 @@ const config = new pulumi.Config();
 
             const srvicePrincipalPassword = new azuread.ServicePrincipalPassword(`sppw-${orgname}-${env}`, {
              servicePrincipalId: servicePrincipal.id,
-                description: `My managed password ${env}`,
-                value: rand.string(24),
+                description: `${env}`,
+                value: rand.string(32).replace(/[&\/\\#,+()$~%.'":*?<>{}º@¨_-´`!=;\[\]^]/g, ''),
                 endDate: "2099-01-01T01:02:03Z",
             });
             const info ={

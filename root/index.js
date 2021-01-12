@@ -86,17 +86,18 @@ environment.forEach(function(env,index){
 
 
 /*Configure Diagnostic Settings for Activity Log*/
-createDiagSetting(`/subscriptions/${config.subscription}`, workspaces[2].id, 'diagActivityLog',config.logsDefintionActivyLog,null,null);
+createDiagSetting(`/subscriptions/${config.subscription}`, workspaces[2].id, 'diagActivityLog',config.logsDefintionActivyLog,null,null,null);
 
 
 /*Set Basic Policies*/
 createDefaultPolicies(config.subscription);
 
+
 let outServicesPrincipals = [];
  servicesPrincipals.forEach(function(s){
     outServicesPrincipals.push(
         pulumi.all([s.passInfo.description,s.spInfo.applicationId,s.passInfo.value]).
-            apply(([envr,spr,pass]) => `Environment: ${envr}, Service Principal: ${spr}, Password: ${pass}`)
+            apply(([envr,spr,pass]) => `{ "env": "${envr}", "tenantId": "${config.tenant}", "subscriptionId": "${config.subscription}", "clientId": "${spr}", "clientSecret": "${pass}" }`)
     );
 });
 
@@ -104,11 +105,14 @@ let outUsers = [];
  users.forEach(function(u){
     outUsers.push(
         pulumi.all([u.userPrincipalName,u.password]).
-            apply(([us,pasw]) => `User: ${us}, Password: ${pasw}`)
+            apply(([us,pasw]) => `user: ${us}, password: ${pasw}`)
     );
 });
 
 
  module.exports = {
-    outServicesPrincipals, outUsers
+   nonprod : outServicesPrincipals[0],
+   prod : outServicesPrincipals[1],
+   mgmt : outServicesPrincipals[2],
+   outUsers
  }

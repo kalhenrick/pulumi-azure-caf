@@ -4,6 +4,7 @@ const config = new pulumi.Config();
 const orgname = config.require('organization');
 const domain = config.require('domain');
 const seed = config.require('seed');
+const tenant = config.require('tenant');
 const subscription = config.require('subscription');
 const location = config.get('location');
 const budget = config.getNumber('budget');
@@ -69,4 +70,4 @@ const logsDefintionActivyLog = [
     }}
 ]
 
-module.exports = { orgname, domain, seed, subscription, location, budget, retention, logsDefintionActivyLog, securityResource}   
+module.exports = { orgname, domain, seed, subscription, location, budget, retention, logsDefintionActivyLog, securityResource,tenant}   
