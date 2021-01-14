@@ -1,16 +1,28 @@
 const azure_nextgen =  require("@pulumi/azure-nextgen");
+const azure =  require("@pulumi/azure");
 const config = require('./config/main');
 const {createStorageAccount} = require('./modules/storage/storageAccount');
 const {createKeyVault} = require('./modules/keyvault/vault');
+const {createRSV} = require('./modules/recoveryservices/vault');
+
 
 async function createResources()  {
 
+
+//
+const azureProviderOld = await  new azure.Provider('azure_old',{
+   clientId: config.applicationId,
+   clientSecret: config.password,
+   tenantId: config.tenant,
+   subscriptionId: config.subscription
+}); 
+
 //Create Provider using Service Principal
 const azureProvider = await new azure_nextgen.Provider('azure',{
-    clientId: config.applicationId,
-    clientSecret: config.password,
-    tenantId: config.tenant,
-    subscriptionId: config.subscription
+   clientId: config.applicationId,
+   clientSecret: config.password,
+   tenantId: config.tenant,
+   subscriptionId: config.subscription
 });
 
 //Get Resource Grpup Environment
@@ -29,8 +41,13 @@ for (const st of config.storageAccounts) {
 
 //Create Key Vaul
 await createKeyVault(`default${config.org}`,config.environment,resourceGroup,subnet,config.tenant,config.applicationId,config.ipAllow,workspace,config.logDefKv,config.metricDefKv,azureProvider)
+
+//Create Recover Service Vault
+
+if(config.environment === 'mgmt')
+await createRSV(config.org,resourceGroup,azureProviderOld,azureProvider,workspace,config.diagRSV);
+
+
 }   
-
-
 
 module.exports = {vnet: createResources()};
