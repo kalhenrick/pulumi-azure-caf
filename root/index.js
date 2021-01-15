@@ -7,7 +7,7 @@ const {createRGs} = require('./modules/core/resourceg');
 const {allowViewBilling,denyViewBilling} = require('./modules/authorization/role');
 const {assingRole} = require('./modules/authorization/roleAssing');
 const {createBudget} = require('./modules/billing/budget')
-const {createDefaultPolicies} = require('./modules/policies/main');
+const {createDefaultPolicies,createPolicyVmAgent} = require('./modules/policies/main');
 const {createWorkspace} = require('./modules/operationalinsights/workspace');
 const {createDiagSetting} = require('./modules/insights/diagnostic');
 const {EnableSecurityCenter}  = require('./modules/security/securityCenter');
@@ -90,7 +90,12 @@ createDiagSetting(`/subscriptions/${config.subscription}`, workspaces[2].id, 'di
 
 
 /*Set Basic Policies*/
-createDefaultPolicies(config.subscription);
+createDefaultPolicies(config.subscription,config.location);
+
+//Policy Agent Deploy
+resourcegroups.forEach(function(rs,index) {
+    createPolicyVmAgent(rs,environment[index],config.location,config.subscription);
+})
 
 
 let outServicesPrincipals = [];
