@@ -79,7 +79,8 @@ const vmOpenVpn = {
     diskName : 'openvpn',
     priority: 'Spot',
     publicIp: true,
-    extension: true
+    extension: true,
+    backupVm: true
 
 };
 

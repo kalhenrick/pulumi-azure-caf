@@ -1,5 +1,6 @@
 const azure_nextgen = require("@pulumi/azure-nextgen");
 const {createDiagSetting} = require('../../../root/modules/insights/diagnostic');
+const {createBackupVm} = require('../../../storage/modules/recoveryservices/vault');
 
 
 async function createPip(name,env,rg,diag,diagPIP,azureProvider) {
@@ -74,7 +75,7 @@ async function createVMExtension(vm,rg,env,ext,azureProvider){
 }
 
 
-async function createVM(vmDefinitions,rg,stg,diagPIP,diagNIC,sshInfo,subnet,env,diag,azureProvider,extension) {
+async function createVM(vmDefinitions,rg,stg,diagPIP,diagNIC,sshInfo,subnet,env,diag,azureProvider,extension,rsv,policyBackup,azureProviderOld) {
     let pip = null;
 
     if(vmDefinitions.publicIp)
@@ -138,7 +139,10 @@ async function createVM(vmDefinitions,rg,stg,diagPIP,diagNIC,sshInfo,subnet,env,
     },{provider: azureProvider});    
 
     if(vmDefinitions.extension)
-    createVMExtension(`vm${vmDefinitions.vmName}${env}`,rg,env,extension,azureProvider)
+    createVMExtension(`vm${vmDefinitions.vmName}${env}`,rg,env,extension,azureProvider);
+
+    if(vmDefinitions.backupVm)
+    createBackupVm(rsv.name,rg,policyBackup,virtualMachine.id,`vm${vmDefinitions.vmName}${env}`,azureProviderOld)
 
     return virtualMachine;
 }

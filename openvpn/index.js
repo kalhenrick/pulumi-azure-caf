@@ -6,8 +6,10 @@ const {createVM} = require('./modules/computer/virtualmachine');
 async function createResources()  {
 
     //Create Provider using Service Principal
-    const azureProvider = await getAzureProvider(config.orgpulumi,config.environment);
-    
+    const provider = await getAzureProvider(config.orgpulumi,config.environment);
+    const azureProvider =  provider.azureProvider;
+    const azureProviderOld =  provider.azureProviderOld;
+
     //Get Resource Grpup Environment
      const resourceGroup = await  azure_nextgen.resources.latest.getResourceGroup({resourceGroupName: `rg-${config.environment}-${config.location}-001`},{provider:azureProvider});    
     
@@ -28,6 +30,11 @@ async function createResources()  {
     // Get Account Key
     const stgKeys = await azure_nextgen.storage.latest.listStorageAccountKeys({accountName: `stgeneral${config.organization}${config.environment}`, resourceGroupName: resourceGroup.name},{provider: azureProvider});
 
+    //Get Recovery Vault
+    const rsv = await  azure_nextgen.recoveryservices.latest.getVault({vaultName: `rsv-${config.organization}-${resourceGroup.location}`, resourceGroupName: resourceGroup.name},{provider: azureProvider});
+
+    //Get Policy Default VM
+    const policyBackup = await azure_nextgen.recoveryservices.latest.getProtectionPolicy({vaultName: rsv.name, policyName: 'defaultBackupVm' ,resourceGroupName: resourceGroup.name},{provider: azureProvider});
 
     let stgKey = stgKeys.keys[0].value;
     let stgName = stgeneral.name;
@@ -35,7 +42,7 @@ async function createResources()  {
 
     let extension = config.extension.replace(/\$\{stg_key\}/gi,stgKey).replace(/\$\{stg_name}/gi,stgName).replace(/\$\{organization}/gi,org);
 
-    await createVM(config.vmOpenVpn,resourceGroup,stgdiag,config.diagPIP,config.diagNIC,config.sshInfo,subnet,config.environment,workspace,azureProvider,extension)
+    await createVM(config.vmOpenVpn,resourceGroup,stgdiag,config.diagPIP,config.diagNIC,config.sshInfo,subnet,config.environment,workspace,azureProvider,extension,rsv,policyBackup.id,azureProviderOld)
 
     }   
 
