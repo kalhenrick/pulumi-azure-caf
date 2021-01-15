@@ -10,6 +10,7 @@ const location = config.get('location');
 const budget = config.getNumber('budget');
 const retention = config.getNumber('retention');
 const securityResource = config.getObject('securityResource');
+const budgetAlertEmail = config.getObject('budgetAlertEmail');
 
 const logsDefintionActivyLog = [
     {
@@ -70,4 +71,4 @@ const logsDefintionActivyLog = [
     }}
 ]
 
-module.exports = { orgname, domain, seed, subscription, location, budget, retention, logsDefintionActivyLog, securityResource,tenant}   
+module.exports = { orgname, domain, seed, subscription, location, budget, retention, logsDefintionActivyLog, securityResource,tenant, budgetAlertEmail}   

@@ -18,7 +18,7 @@ const config = require('./config/main');
 EnableSecurityCenter(config.securityResource);
 
 /*Create Budget*/
-createBudget(config.subscription,config.budget);
+createBudget(config.subscription,config.budget,config.budgetAlertEmail);
 
 /*Create Roles View e Deny billing*/
 const roleAllowViewBilling = allowViewBilling(config.subscription);
