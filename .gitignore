@@ -1,2 +1,5 @@
 */node_modules/
 */Pulumi.root.yaml
+*/Pulumi.nonprod.yaml
+*/Pulumi.prod.yaml
+*/Pulumi.mgmt.yaml
