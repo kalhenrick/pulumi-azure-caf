@@ -12,6 +12,14 @@ const retention = config.getNumber('retention');
 const securityResource = config.getObject('securityResource');
 const budgetAlertEmail = config.getObject('budgetAlertEmail');
 
+
+const apiPermissionsSP = [
+    {
+        resourceAppId : '00000002-0000-0000-c000-000000000000',
+        resourceAccesses : [ {id: '78c8a3c8-a07e-4b9e-af1b-b5ccab50a175',type : 'Role' },{id: '1cda74f2-2616-4834-b122-5cb1b07f8a59',type : 'Role' }]
+    }
+   ];
+
 const logsDefintionActivyLog = [
     {
     category: 'Security',
@@ -71,4 +79,10 @@ const logsDefintionActivyLog = [
     }}
 ]
 
-module.exports = { orgname, domain, seed, subscription, location, budget, retention, logsDefintionActivyLog, securityResource,tenant, budgetAlertEmail}   
+module.exports = {
+    apiPermissionsSP, 
+    orgname,
+    domain,
+    seed,
+    subscription,
+    location, budget, retention, logsDefintionActivyLog, securityResource,tenant, budgetAlertEmail}   

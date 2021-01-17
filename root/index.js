@@ -2,7 +2,7 @@ const pulumi = require("@pulumi/pulumi");
 const environment = ['nonprod','prod','mgmt','billing'];
 const {UsersAD} = require('./modules/aad/user');
 const {createGroups} = require('./modules/aad/group');
-const {createServicePrincipal} = require('./modules/aad/sp');
+const {CreateServicePrincipal} = require('./modules/aad/sp');
 const {createRGs} = require('./modules/core/resourceg');
 const {allowViewBilling,denyViewBilling} = require('./modules/authorization/role');
 const {assingRole} = require('./modules/authorization/roleAssing');
@@ -25,12 +25,13 @@ const roleAllowViewBilling = allowViewBilling(config.subscription);
 const roleDenyViewBilling = denyViewBilling(config.subscription);
 
 
-/*Create Service Principals*/
+/*Create Service Principals for Pulumit stack*/
 let servicesPrincipals = [];
 environment.forEach(function(env){
     if (env != 'billing')
-    servicesPrincipals.push(createServicePrincipal(env,config.domain,config.orgname,config.seed))
+        servicesPrincipals.push(CreateServicePrincipal(env,config.domain,`${config.orgname}-${env}`,config.seed,true,config.apiPermissionsSP));
 });
+
 
 /*Create Users*/
 let users = [];
@@ -63,13 +64,15 @@ environment.forEach(function(env){
 /*Create Role Assing Service Principal*/
 environment.forEach(function(env,index){
     if (env != 'billing' && env != 'mgmt'){
-        assingRole(servicesPrincipals[index].spInfo.id,'Contributor',`rl-rg-${env}-contributor`,resourcegroups[index].id)
+        assingRole(servicesPrincipals[index].spInfo.id,'Owner',`rl-rg-${env}-contributor`,resourcegroups[index].id)
         assingRole(servicesPrincipals[2].spInfo.id,'Network Contributor',`rl-rg-${env}-mgmt-net-contributor`,resourcegroups[index].id)
     } else if (env === 'mgmt') {
-        assingRole(servicesPrincipals[index].spInfo.id,'Contributor',`rl-rg-${env}-contributor`,resourcegroups[index].id)
+        assingRole(servicesPrincipals[index].spInfo.id,'Owner',`rl-rg-${env}-contributor`,resourcegroups[index].id)
     }
     
 });
+
+
 
 /*Create Role Assing Group*/
  environment.forEach(function(env,index){
@@ -97,6 +100,13 @@ resourcegroups.forEach(function(rs,index) {
     createPolicyVmAgent(rs,environment[index],config.location,config.subscription);
 })
 
+let outGruoups = [];
+groups.forEach(function(g){
+    outGruoups.push(
+        pulumi.all([g.id,g.name,g.objectId]).
+        apply(([id,name,objectId]) => `{ "id": "${id}", "name": "${name}", "objectId": "${objectId}"}`)
+    );
+});
 
 let outServicesPrincipals = [];
  servicesPrincipals.forEach(function(s){
@@ -105,6 +115,15 @@ let outServicesPrincipals = [];
             apply(([envr,spr,pass]) => `{ "env": "${envr}", "tenantId": "${config.tenant}", "subscriptionId": "${config.subscription}", "clientId": "${spr}", "clientSecret": "${pass}" }`)
     );
 });
+
+let appPermissions = [];
+ servicesPrincipals.forEach(function(s){
+    outServicesPrincipals.push(
+        pulumi.all([s.passInfo.description,s.spInfo.applicationId,s.passInfo.value]).
+            apply(([envr,spr,pass]) => `{ "env": "${envr}", "tenantId": "${config.tenant}", "subscriptionId": "${config.subscription}", "clientId": "${spr}", "clientSecret": "${pass}" }`)
+    );
+});
+
 
 let outUsers = [];
  users.forEach(function(u){
@@ -119,5 +138,8 @@ let outUsers = [];
    nonprod : outServicesPrincipals[0],
    prod : outServicesPrincipals[1],
    mgmt : outServicesPrincipals[2],
+   group_nonprod : outGruoups[0],
+   group_prod : outGruoups[1],
+   group_mgmt : outGruoups[2],
    outUsers
  }
