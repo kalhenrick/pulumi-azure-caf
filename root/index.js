@@ -1,7 +1,7 @@
 const pulumi = require("@pulumi/pulumi");
 const environment = ['nonprod','prod','mgmt','billing'];
 const {UsersAD} = require('./modules/aad/user');
-const {createGroups} = require('./modules/aad/group');
+const {CreateGroups} = require('./modules/aad/group');
 const {CreateServicePrincipal} = require('./modules/aad/sp');
 const {createRGs} = require('./modules/core/resourceg');
 const {allowViewBilling,denyViewBilling} = require('./modules/authorization/role');
@@ -42,7 +42,7 @@ environment.forEach(function(env){
 /*Create Groups*/
 let groups = [];
 users.map(u => u.id).forEach(function(us,index) {+
-    groups.push(createGroups(us,environment[index],config.orgname));
+    groups.push(CreateGroups(`${config.orgname}-${environment[index]}`,[us]));
 });
 
 /*Role View Billing*/
@@ -100,6 +100,8 @@ resourcegroups.forEach(function(rs,index) {
     createPolicyVmAgent(rs,environment[index],config.location,config.subscription);
 })
 
+
+
 let outGruoups = [];
 groups.forEach(function(g){
     outGruoups.push(
@@ -132,7 +134,6 @@ let outUsers = [];
             apply(([us,pasw]) => `user: ${us}, password: ${pasw}`)
     );
 });
-
 
  module.exports = {
    nonprod : outServicesPrincipals[0],

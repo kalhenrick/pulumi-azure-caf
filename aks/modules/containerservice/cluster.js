@@ -1,6 +1,7 @@
 const azure_nextgen = require("@pulumi/azure-nextgen");
+const {createDiagSetting} = require('../../../root/modules/insights/diagnostic');
 
-async function CreateCluster(clusterName,env,rg, group,vmDefinition,sshData,spId,spPass,azureProvider) {
+async function CreateCluster({clusterName,env,rg,group,vmDefinition,sshData,spId,spPass,diag,diagDef,azureProvider}) {
 
 const managedCluster = new azure_nextgen.containerservice.latest.ManagedCluster("managedCluster", {
     aadProfile: {
@@ -11,21 +12,21 @@ const managedCluster = new azure_nextgen.containerservice.latest.ManagedCluster(
     },
     addonProfiles: {},
     agentPoolProfiles: [{
-        availabilityZones: vmDefinition.availabilityZones,
-        count: vmDefinition.count,
+        availabilityZones: vmDefinition.availabilityZonesDefault,
+        count: vmDefinition.countDefault,
         enableNodePublicIP: vmDefinition.enableNodePublicIP,
         mode: "System",
         name: clusterName,
-        osType: vmDefinition.osType,
+        osType: "Linux",
         type: "VirtualMachineScaleSets",
-        vmSize: vmDefinition.vmSize,
+        vmSize: vmDefinition.vmSizeDefault,
         vnetSubnetID: vmDefinition.vnetSubnetID,
-        scaleSetPriority: vmDefinition.scaleSetPriority,
+        scaleSetPriority: vmDefinition.scaleSetPriorityDefaultPool,
         enableAutoScaling: vmDefinition.enableAutoScaling,
-        minCount: vmDefinition.minCount,
-        maxCount: vmDefinition.maxCount,
-        maxPods: vmDefinition.maxPods,
-        osDiskSizeGB: vmDefinition.osDiskSizeGB,
+        minCount: vmDefinition.minCountDefault,
+        maxCount: vmDefinition.maxCountDefault,
+        maxPods: vmDefinition.maxPodsDefault,
+        osDiskSizeGB: vmDefinition.osDiskSizeGBDefault,
     }],
     nodeResourceGroup: `rg-node-${clusterName}`,
     autoScalerProfile: {
@@ -70,6 +71,8 @@ const managedCluster = new azure_nextgen.containerservice.latest.ManagedCluster(
     }
 
 },{provider: azureProvider});
+
+await createDiagSetting(managedCluster.id,diag.id,`diag-${clusterName}`,diagDef.log,diagDef.metric,null,azureProvider)
 
 return managedCluster;
 
